@@ -32,29 +32,18 @@ export function PhotoUpload({ onUpload, className }: PhotoUploadProps) {
     setLoading(true);
 
     try {
-      if (typeof window !== "undefined" && "DataTransfer" in window) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result as string;
-          onUpload(result);
-          setLoading(false);
-          toast.success("Фото загружено");
-        };
-        reader.onerror = () => {
-          setLoading(false);
-          toast.error("Не удалось прочитать файл");
-        };
-        reader.readAsDataURL(file);
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
-      onUpload(data.url);
-      toast.success("Фото загружено");
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        onUpload(result);
+        setLoading(false);
+        toast.success("Фото загружено");
+      };
+      reader.onerror = () => {
+        setLoading(false);
+        toast.error("Не удалось прочитать файл");
+      };
+      reader.readAsDataURL(file);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Ошибка загрузки");
     } finally {
